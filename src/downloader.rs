@@ -1,10 +1,8 @@
 use crate::extractor::VideoInfo;
-use bytesize::ByteSize;
 use futures::{stream, StreamExt};
 use num_cpus;
 use reqwest::header;
 use reqwest::Client;
-use reqwest::Url;
 use seahorse::color;
 use std::io::Read;
 use std::io::Write;

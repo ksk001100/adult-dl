@@ -12,9 +12,10 @@ pub struct Xvideos {}
 #[async_trait]
 impl Extractor for Xvideos {
     async fn extract(&self, url: &str) -> Result<VideoInfo, Box<dyn std::error::Error>> {
+        let client = Client::new();
         let re_url = Regex::new(r#"setVideoUrlHigh\('(.*?)'"#).unwrap();
         let re_title = Regex::new(r"<title>(.*?)</title>").unwrap();
-        let resp = reqwest::get(url).await?;
+        let resp = client.get(url).send().await?;
         let headers = resp.headers().clone();
         let html = resp.text().await?;
         let url = re_url
@@ -32,7 +33,6 @@ impl Extractor for Xvideos {
             .as_str()
             .to_string();
             
-        let client = Client::new();
         let resp = client.head(&url).send().await?;
         let size = match resp.headers().get(header::CONTENT_LENGTH) {
             Some(s) => s.to_str().unwrap().parse().unwrap(),
