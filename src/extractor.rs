@@ -18,6 +18,8 @@ pub trait Extractor {
 pub struct VideoInfo {
     pub url: String,
     pub title: String,
+    pub size: usize,
+    pub filename: String,
 }
 
 pub async fn select_extractor(url: &str) -> Result<Box<dyn Extractor>, Box<dyn std::error::Error>> {

@@ -1,20 +1,21 @@
+use crate::extractor::VideoInfo;
+use bytesize::ByteSize;
 use futures::{stream, StreamExt};
 use num_cpus;
 use reqwest::header;
 use reqwest::Client;
 use reqwest::Url;
+use seahorse::color;
 use std::io::Read;
 use std::io::Write;
+use std::sync::Arc;
 use tokio::prelude::*;
 use tokio::sync::Mutex;
-use std::sync::Arc;
-use seahorse::color;
 
 #[derive(Debug)]
 pub struct Downloader {
     client: Client,
     url: String,
-    title: Option<String>,
     filename: String,
     temp_size: usize,
     content_length: usize,
@@ -34,25 +35,16 @@ impl PartialRange {
 }
 
 impl Downloader {
-    pub async fn new(
-        url: String,
-        filename: Option<String>,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
-        let filename = match filename {
-            Some(name) => name,
-            None => String::new(),
-        };
-        let mut s = Self {
+    pub async fn new(videoinfo: VideoInfo) -> Result<Self, Box<dyn std::error::Error>> {
+        let s = Self {
             client: Client::new(),
-            url,
-            title: None,
-            filename,
+            url: videoinfo.url.to_owned(),
+            filename: videoinfo.filename.to_owned(),
             temp_size: 300000,
-            content_length: 0,
+            content_length: videoinfo.size,
             downloaded_count: Arc::new(Mutex::new(1)),
         };
 
-        s.set_meta_data().await?;
         Ok(s)
     }
 
@@ -76,33 +68,6 @@ impl Downloader {
                 PartialRange::new(index, range)
             })
             .collect())
-    }
-
-    async fn set_meta_data(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let res = self.client.head(&self.url).send().await?;
-        let length: usize = res
-            .headers()
-            .get(header::CONTENT_LENGTH)
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .parse()
-            .unwrap();
-        let filename = match res.headers().get(header::CONTENT_DISPOSITION) {
-            Some(name) => name.to_str().unwrap().to_string(),
-            None => {
-                let parsed = Url::parse(&self.url).unwrap();
-                parsed.path().split("/").last().unwrap().to_string()
-            }
-        };
-
-        self.content_length = length;
-
-        if self.filename.is_empty() {
-            self.filename = filename;
-        }
-
-        Ok(())
     }
 
     pub async fn download(&self) -> Result<(), Box<dyn std::error::Error>> {
@@ -143,7 +108,7 @@ impl Downloader {
             .for_each(|_| async {})
             .await;
 
-        let mut file = std::fs::File::create(self.filename.clone()).unwrap();
+        let mut file = std::fs::File::create(&self.filename).unwrap();
 
         for i in 0..count {
             let mut buf: Vec<u8> = Vec::new();
@@ -157,9 +122,15 @@ impl Downloader {
         tokio::fs::remove_dir_all("temps").await?;
 
         println!("\n\n\t{}", color::green("==========================="));
-        println!("\t{}  {}  {}", color::green("||"), color::yellow("Download Complete!!"), color::green("||"));
+        println!(
+            "\t{}  {}  {}",
+            color::green("||"),
+            color::yellow("Download Complete!!"),
+            color::green("||")
+        );
         println!("\t{}\n", color::green("==========================="));
 
+        // println!("[File size] : {}", std::fs::metadata(&self.filename).unwrap().len());
         Ok(())
     }
 }

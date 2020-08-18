@@ -9,6 +9,11 @@ pub struct Pornhub {}
 #[async_trait]
 impl Extractor for Pornhub {
     async fn extract(&self, url: &str) -> Result<VideoInfo, Box<dyn std::error::Error>> {
-        Ok(VideoInfo { url: String::new(), title: String::new() })
+        Ok(VideoInfo {
+            url: String::new(),
+            title: String::new(),
+            size: 0,
+            filename: String::new(),
+        })
     }
 }

@@ -35,11 +35,6 @@ fn action(c: &Context) {
                 std::process::exit(1);
             };
 
-            let filename = match c.string_flag("output") {
-                Ok(s) => Some(s),
-                Err(_) => None,
-            };
-
             let ext = select_extractor(url).await.unwrap();
             let videoinfo = ext.extract(url).await.unwrap();
 
@@ -47,7 +42,7 @@ fn action(c: &Context) {
             println!("[Title] : {}", videoinfo.title);
             println!("[Extract URL] : {}\n", videoinfo.url);
 
-            let downloader = Downloader::new(videoinfo.url, filename).await.unwrap();
+            let downloader = Downloader::new(videoinfo).await.unwrap();
             downloader.download().await.unwrap();
         }),
         Err(e) => eprintln!("{}", color::red(e)),
