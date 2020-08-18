@@ -6,6 +6,7 @@ use extractor::select_extractor;
 
 use seahorse::{color, App, Context, Flag, FlagType};
 use std::env;
+use bytesize::ByteSize;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -39,10 +40,11 @@ fn action(c: &Context) {
             let videoinfo = ext.extract(url).await.unwrap();
 
             println!("\n[URL] : {}", url);
-            println!("[Title] : {}", videoinfo.title);
-            println!("[Extract URL] : {}\n", videoinfo.url);
+            println!("[TITLE] : {}", videoinfo.title);
+            println!("[EXTRACT URL] : {}", videoinfo.url);
+            println!("[FILE SIZE] : {}\n", ByteSize::b(videoinfo.size as u64));
 
-            let downloader = Downloader::new(videoinfo).await.unwrap();
+            let downloader = Downloader::new(videoinfo);
             downloader.download().await.unwrap();
         }),
         Err(e) => eprintln!("{}", color::red(e)),

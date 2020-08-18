@@ -33,17 +33,15 @@ impl PartialRange {
 }
 
 impl Downloader {
-    pub async fn new(videoinfo: VideoInfo) -> Result<Self, Box<dyn std::error::Error>> {
-        let s = Self {
+    pub fn new(videoinfo: VideoInfo) -> Self {
+        Self {
             client: Client::new(),
             url: videoinfo.url.to_owned(),
             filename: videoinfo.filename.to_owned(),
             temp_size: 300000,
             content_length: videoinfo.size,
             downloaded_count: Arc::new(Mutex::new(1)),
-        };
-
-        Ok(s)
+        }
     }
 
     async fn range_headers(&self) -> Result<Vec<PartialRange>, Box<dyn std::error::Error>> {
@@ -91,15 +89,14 @@ impl Downloader {
                     .await
                     .unwrap();
 
-                let mut lock = self.downloaded_count.lock().await;
                 while let Some(b) = resp.next().await {
                     file.write(&b.unwrap()).await.unwrap();
-
-                    let per = (*lock as f64 / count as f64) * 100.0;
-                    let progress = "=".repeat(per as usize);
-                    let whitespace = " ".repeat(100 - (per as usize));
-                    print!("\r[{}>{}] : {:.1}%", progress, whitespace, per);
                 }
+                let mut lock = self.downloaded_count.lock().await;
+                let per = (*lock as f64 / count as f64) * 100.0;
+                let progress = "=".repeat(per as usize);
+                let whitespace = " ".repeat(100 - (per as usize));
+                print!("\r[{}>{}] : {:.1}%", progress, whitespace, per);
                 *lock += 1;
             })
             .buffer_unordered(num_cpus::get())
