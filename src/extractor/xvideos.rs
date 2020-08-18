@@ -1,4 +1,5 @@
 use super::Extractor;
+use super::VideoInfo;
 use async_trait::async_trait;
 use regex::Regex;
 
@@ -7,12 +8,14 @@ pub struct Xvideos {}
 
 #[async_trait]
 impl Extractor for Xvideos {
-    async fn extract(&self, url: &str) -> Result<String, Box<dyn std::error::Error>> {
-        let re = Regex::new(r#"setVideoUrlHigh\('(.*?)'"#).unwrap();
+    async fn extract(&self, url: &str) -> Result<VideoInfo, Box<dyn std::error::Error>> {
+        let re_url = Regex::new(r#"setVideoUrlHigh\('(.*?)'"#).unwrap();
+        let re_title = Regex::new(r"<title>(.*?)</title>").unwrap();
         let resp = reqwest::get(url).await?;
-        let body = resp.text().await?;
-        let caps = re.captures(&body).unwrap();
+        let html = resp.text().await?;
+        let url = re_url.captures(&html).unwrap().get(1).unwrap().as_str().to_string();
+        let title = re_title.captures(&html).unwrap().get(1).unwrap().as_str().to_string();
 
-        Ok(caps.get(1).unwrap().as_str().to_string())
+        Ok(VideoInfo { url, title })
     }
 }

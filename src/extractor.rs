@@ -11,7 +11,13 @@ use reqwest::Url;
 
 #[async_trait]
 pub trait Extractor {
-    async fn extract(&self, url: &str) -> Result<String, Box<dyn std::error::Error>>;
+    async fn extract(&self, url: &str) -> Result<VideoInfo, Box<dyn std::error::Error>>;
+}
+
+#[derive(Debug)]
+pub struct VideoInfo {
+    pub url: String,
+    pub title: String,
 }
 
 pub async fn select_extractor(url: &str) -> Result<Box<dyn Extractor>, Box<dyn std::error::Error>> {

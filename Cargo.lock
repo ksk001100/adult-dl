@@ -6,8 +6,10 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "futures",
+ "num_cpus",
  "regex",
  "reqwest",
+ "seahorse",
  "tokio",
 ]
 
@@ -810,6 +812,12 @@ dependencies = [
  "lazy_static",
  "winapi 0.3.9",
 ]
+
+[[package]]
+name = "seahorse"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "48badc1e4709936b554463f45691c5c5d667c2203a6872aa4283bc14bed3e9c7"
 
 [[package]]
 name = "security-framework"
