@@ -4,10 +4,15 @@ use num_cpus;
 use reqwest::{header, Client};
 use seahorse::color;
 use std::{
-    io::{Read, Write, BufReader},
+    fs::File,
+    io::{BufReader, Read, Write},
     sync::Arc,
 };
-use tokio::{prelude::*, sync::Mutex};
+use tokio::{
+    fs::{create_dir, remove_dir_all, File as AsyncFile},
+    prelude::*,
+    sync::Mutex,
+};
 
 #[derive(Debug)]
 pub struct Downloader {
@@ -67,7 +72,7 @@ impl Downloader {
 
     pub async fn download(&self) -> Result<(), Box<dyn std::error::Error>> {
         if !std::path::Path::new("temps").exists() {
-            tokio::fs::create_dir("temps").await?;
+            create_dir("temps").await?;
         }
 
         let partial_range = self.range_headers().await?;
@@ -84,7 +89,7 @@ impl Downloader {
                     .unwrap()
                     .bytes_stream();
 
-                let mut file = tokio::fs::File::create(format!("temps/{}.tmp", r.index))
+                let mut file = AsyncFile::create(format!("temps/{}.tmp", r.index))
                     .await
                     .unwrap();
 
@@ -102,18 +107,17 @@ impl Downloader {
             .for_each(|_| async {})
             .await;
 
-        let mut file = std::fs::File::create(&self.filename).unwrap();
+        let mut file = File::create(&self.filename).unwrap();
 
         for i in 0..count {
             let mut buf: Vec<u8> = Vec::new();
-            let mut temp_file =
-                std::io::BufReader::new(std::fs::File::open(format!("temps/{}.tmp", i)).unwrap());
+            let mut temp_file = BufReader::new(File::open(format!("temps/{}.tmp", i)).unwrap());
             temp_file.read_to_end(&mut buf).unwrap();
 
             file.write(&buf).unwrap();
         }
 
-        tokio::fs::remove_dir_all("temps").await?;
+        remove_dir_all("temps").await?;
 
         println!("\n\n\t{}", color::green("==========================="));
         println!(
