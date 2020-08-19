@@ -2,12 +2,11 @@ mod fc2;
 mod pornhub;
 mod xvideos;
 
+use async_trait::async_trait;
 use fc2::Fc2;
 use pornhub::Pornhub;
-use xvideos::Xvideos;
-
-use async_trait::async_trait;
 use reqwest::Url;
+use xvideos::Xvideos;
 
 #[async_trait]
 pub trait Extractor {

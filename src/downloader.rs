@@ -1,14 +1,13 @@
 use crate::extractor::VideoInfo;
 use futures::{stream, StreamExt};
 use num_cpus;
-use reqwest::header;
-use reqwest::Client;
+use reqwest::{header, Client};
 use seahorse::color;
-use std::io::Read;
-use std::io::Write;
-use std::sync::Arc;
-use tokio::prelude::*;
-use tokio::sync::Mutex;
+use std::{
+    io::{Read, Write},
+    sync::Arc,
+};
+use tokio::{prelude::*, sync::Mutex};
 
 #[derive(Debug)]
 pub struct Downloader {

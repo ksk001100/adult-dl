@@ -2,9 +2,7 @@ use super::Extractor;
 use super::VideoInfo;
 use async_trait::async_trait;
 use regex::Regex;
-use reqwest::header;
-use reqwest::Client;
-use reqwest::Url;
+use reqwest::{header, Client, Url};
 
 #[derive(Debug)]
 pub struct Xvideos {}

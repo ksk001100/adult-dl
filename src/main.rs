@@ -1,10 +1,9 @@
 mod downloader;
 mod extractor;
 
+use bytesize::ByteSize;
 use downloader::Downloader;
 use extractor::select_extractor;
-
-use bytesize::ByteSize;
 use seahorse::{color, App, Context, Flag, FlagType};
 use std::env;
 
