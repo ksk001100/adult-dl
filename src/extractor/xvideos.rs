@@ -3,8 +3,8 @@ use super::VideoInfo;
 use async_trait::async_trait;
 use regex::Regex;
 use reqwest::header;
-use reqwest::Url;
 use reqwest::Client;
+use reqwest::Url;
 
 #[derive(Debug)]
 pub struct Xvideos {}
@@ -32,7 +32,7 @@ impl Extractor for Xvideos {
             .unwrap()
             .as_str()
             .to_string();
-            
+
         let resp = client.head(&url).send().await?;
         let size = match resp.headers().get(header::CONTENT_LENGTH) {
             Some(s) => s.to_str().unwrap().parse().unwrap(),

@@ -4,9 +4,9 @@ mod extractor;
 use downloader::Downloader;
 use extractor::select_extractor;
 
+use bytesize::ByteSize;
 use seahorse::{color, App, Context, Flag, FlagType};
 use std::env;
-use bytesize::ByteSize;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
