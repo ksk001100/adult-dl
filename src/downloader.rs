@@ -4,7 +4,7 @@ use num_cpus;
 use reqwest::{header, Client};
 use seahorse::color;
 use std::{
-    io::{Read, Write},
+    io::{Read, Write, BufReader},
     sync::Arc,
 };
 use tokio::{prelude::*, sync::Mutex};
@@ -124,7 +124,6 @@ impl Downloader {
         );
         println!("\t{}\n", color::green("==========================="));
 
-        // println!("[File size] : {}", std::fs::metadata(&self.filename).unwrap().len());
         Ok(())
     }
 }
