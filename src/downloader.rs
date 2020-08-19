@@ -21,7 +21,7 @@ pub struct Downloader {
     filename: String,
     temp_size: usize,
     content_length: usize,
-    downloaded_count: Arc<Mutex<usize>>,
+    counter: Arc<Mutex<usize>>,
 }
 
 #[derive(Debug)]
@@ -44,7 +44,7 @@ impl Downloader {
             filename: videoinfo.filename.to_owned(),
             temp_size: 300000,
             content_length: videoinfo.size,
-            downloaded_count: Arc::new(Mutex::new(1)),
+            counter: Arc::new(Mutex::new(1)),
         }
     }
 
@@ -96,12 +96,12 @@ impl Downloader {
                 while let Some(b) = resp.next().await {
                     file.write(&b.unwrap()).await.unwrap();
                 }
-                let mut lock = self.downloaded_count.lock().await;
-                let per = (*lock as f64 / count as f64) * 100.0;
+                let mut counter = self.counter.lock().await;
+                let per = (*counter as f64 / count as f64) * 100.0;
                 let progress = "=".repeat(per as usize);
                 let whitespace = " ".repeat(100 - (per as usize));
                 print!("\r[{}>{}] : {:.1}%", progress, whitespace, per);
-                *lock += 1;
+                *counter += 1;
             })
             .buffer_unordered(num_cpus::get())
             .for_each(|_| async {})
