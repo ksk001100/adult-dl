@@ -37,13 +37,13 @@ impl PartialRange {
 }
 
 impl Downloader {
-    pub fn new(videoinfo: VideoInfo) -> Self {
+    pub fn new(video_info: VideoInfo) -> Self {
         Self {
             client: Client::new(),
-            url: videoinfo.url.to_owned(),
-            filename: videoinfo.filename.to_owned(),
+            url: video_info.url.to_owned(),
+            filename: video_info.filename.to_owned(),
             temp_size: 300000,
-            content_length: videoinfo.size,
+            content_length: video_info.size,
             counter: Arc::new(Mutex::new(1)),
         }
     }
