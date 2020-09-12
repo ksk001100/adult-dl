@@ -1,11 +1,14 @@
 [package]
 name = "adult-dl"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["ksk001100 <hm.pudding0715@gmail.com>"]
 edition = "2018"
 description = "Fast adult video downloader"
+repository = "https://github.com/ksk001100/adult-dl"
+keywords = ["downloader", "parallel"]
+license-file = "LICENSE"
+readme = "README.md"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 regex = "1"
