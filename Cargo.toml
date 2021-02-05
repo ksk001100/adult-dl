@@ -1,6 +1,6 @@
 [package]
 name = "adult-dl"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["ksk001100 <hm.pudding0715@gmail.com>"]
 edition = "2018"
 description = "Fast adult video downloader"
@@ -17,5 +17,5 @@ reqwest = { version = "0.10", features = ["blocking", "stream"] }
 tokio = { version = "0.2", features = ["full"] }
 futures = "0.3.5"
 num_cpus = "1.0"
-seahorse = "1.0"
+seahorse = "1.1"
 bytesize = "1.0.1"

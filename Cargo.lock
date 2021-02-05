@@ -2,7 +2,7 @@
 # It is not intended for manual editing.
 [[package]]
 name = "adult-dl"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
  "async-trait",
  "bytesize",
@@ -822,9 +822,9 @@ dependencies = [
 
 [[package]]
 name = "seahorse"
-version = "1.0.0"
+version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48badc1e4709936b554463f45691c5c5d667c2203a6872aa4283bc14bed3e9c7"
+checksum = "ce7d9440e2865cce0db733bdc530591b37d37a2d32badace34a1fc9ba5686d58"
 
 [[package]]
 name = "security-framework"

@@ -17,7 +17,7 @@ fn main() {
         .action(action)
         .flag(
             Flag::new("output", FlagType::String)
-                .usage("--output, -o [name]: Specifying the output filename")
+                .description("Specifying the output filename")
                 .alias("o"),
         );
 
